@@ -87,9 +87,13 @@ def end_nodes(model_path: Path) -> list[str]:
 def quantize_int8(val_ds, val_loader, seed: int, n_calib: int = 512) -> tuple[str, dict]:
     pre = MODELS_DIR / "_pre.onnx"
     quant_pre_process(str(FP32_PATH), str(pre))
-    batches = calibration_batches(val_ds, n_calib, seed)
-    # Histogram methods keep every activation in RAM: use a smaller calibration set
-    small = calibration_batches(val_ds, 128, seed, bs=16)
+    # Calibration keeps activations in RAM: scale the number of images with the input
+    # resolution (112 px -> 512 / 128 images, 224 px -> 128 / 32 images).
+    s = val_ds[0][0].shape[-1]
+    scale = (112 / s) ** 2
+    batches = calibration_batches(val_ds, max(int(n_calib * scale), 64), seed, bs=16)
+    small = calibration_batches(val_ds, max(int(128 * scale), 32), seed, bs=8)
+    print(f"  calibration images: minmax={sum(len(b) for b in batches)} histogram={sum(len(b) for b in small)}")
     ablation, best_name, best_f1 = {}, None, -1.0
     for name, c in QUANT_CONFIGS.items():
         out = MODELS_DIR / f"_q_{name}.onnx"
@@ -142,7 +146,7 @@ def main() -> None:
     cfg = json.loads((MODELS_DIR / "model_config.json").read_text())
     s, classes = cfg["input_size"], cfg["classes"]
 
-    loaders, dsets = build_loaders(params["data"]["processed_dir"], classes, s, batch_size=64, num_workers=0)
+    loaders, dsets = build_loaders(params["data"]["processed_dir"], classes, s, batch_size=16, num_workers=0)
     print("[quantize] static INT8: comparing calibration configs on the validation set...")
     best_cfg, ablation = quantize_int8(dsets["val"], loaders["val"], params["seed"])
 

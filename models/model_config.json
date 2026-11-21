@@ -1,0 +1,24 @@
+{
+  "model": "efficientnet_b0",
+  "classes": [
+    "neutral",
+    "happiness",
+    "surprise",
+    "sadness",
+    "anger",
+    "disgust",
+    "fear"
+  ],
+  "input_size": 224,
+  "mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "std": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "grayscale_to_rgb": true
+}

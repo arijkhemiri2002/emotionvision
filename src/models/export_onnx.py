@@ -112,7 +112,9 @@ def export(opset: int) -> None:
         so = ort.SessionOptions()
         so.graph_optimization_level = level
         sess = ort.InferenceSession(str(ONNX_PATH), so, providers=["CPUExecutionProvider"])
-        return sess.run(None, {"input": x})
+        # small chunks: at 224 px the un-optimized graph needs large buffers (low-RAM PCs)
+        outs = [sess.run(None, {"input": x[i:i + 8]}) for i in range(0, len(x), 8)]
+        return np.concatenate([o[0] for o in outs]), np.concatenate([o[1] for o in outs])
 
     o_logits, o_cams = run(ort.GraphOptimizationLevel.ORT_ENABLE_ALL)
     n_logits, _ = run(ort.GraphOptimizationLevel.ORT_DISABLE_ALL)

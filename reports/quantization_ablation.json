@@ -1,22 +1,22 @@
 {
   "minmax_all": {
-    "val_accuracy": 0.785,
-    "val_macro_f1": 0.6748,
+    "val_accuracy": 0.7753,
+    "val_macro_f1": 0.6554,
     "size_mb": 4.82
   },
   "minmax_conv": {
-    "val_accuracy": 0.7944,
-    "val_macro_f1": 0.6917,
+    "val_accuracy": 0.7809,
+    "val_macro_f1": 0.6558,
     "size_mb": 4.75
   },
   "percentile_conv": {
-    "val_accuracy": 0.818,
-    "val_macro_f1": 0.7245,
+    "val_accuracy": 0.7734,
+    "val_macro_f1": 0.6672,
     "size_mb": 4.75
   },
   "percentile_conv_x": {
-    "val_accuracy": 0.8475,
-    "val_macro_f1": 0.769,
+    "val_accuracy": 0.8145,
+    "val_macro_f1": 0.7246,
     "size_mb": 4.78
   }
 }

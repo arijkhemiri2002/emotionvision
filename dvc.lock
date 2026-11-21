@@ -50,8 +50,8 @@ stages:
       nfiles: 31261
     - path: src/models/export_onnx.py
       hash: md5
-      md5: 993bdcf54047820b296f83a6cc1fec90
-      size: 6406
+      md5: d4556f23ea5024c9aadf1ef433291b46
+      size: 6980
     - path: src/models/factory.py
       hash: md5
       md5: 8ff06939b1ac981cbe673eacde55a0ab
@@ -63,15 +63,15 @@ stages:
     outs:
     - path: models/champion.pt
       hash: md5
-      md5: f49c5a895c73509274f9ed40a518449e
+      md5: 2b0a3c19d230b082592fc2b927671939
       size: 16365381
     - path: models/emotionvision.onnx
       hash: md5
-      md5: 2c41d49503677a6c51b110ce8a9b951b
-      size: 16041487
+      md5: 7aba63952ad12be6b5f657a02285b08b
+      size: 16041489
     - path: models/model_config.json
       hash: md5
-      md5: 36df29aef9826426cadb49106b3e991f
+      md5: bdda2bc66579944f1ac4ddabd4c21179
       size: 300
   benchmark:
     cmd: python -m src.models.benchmark
@@ -83,29 +83,29 @@ stages:
       nfiles: 31261
     - path: models/champion.pt
       hash: md5
-      md5: f49c5a895c73509274f9ed40a518449e
+      md5: 2b0a3c19d230b082592fc2b927671939
       size: 16365381
     - path: models/emotionvision.onnx
       hash: md5
-      md5: 2c41d49503677a6c51b110ce8a9b951b
-      size: 16041487
+      md5: 7aba63952ad12be6b5f657a02285b08b
+      size: 16041489
     - path: src/models/benchmark.py
       hash: md5
-      md5: 2090e50ecf9b7427eafda094dfbf51fc
-      size: 9285
+      md5: 6828c637e2b8e4b40b1e1f0bd11b8702
+      size: 9582
     outs:
     - path: models/emotionvision_int8.onnx
       hash: md5
-      md5: 3beedb425109c5fc8cac764939fad1c0
-      size: 4775351
+      md5: 94ebdee1fa9d7bc15370ffe0d2bcf9db
+      size: 4775359
     - path: reports/benchmark.json
       hash: md5
-      md5: fe950a0f0d4a6a23636c49b4e65f0f87
-      size: 826
+      md5: e4019f874a7df96b6f0f4569391ea34a
+      size: 831
     - path: reports/quantization_ablation.json
       hash: md5
-      md5: a28c5ecf48128ebc2966909c98c8965b
-      size: 429
+      md5: 4772094488f6e235e6423bbcfe6757d4
+      size: 432
   explain:
     cmd: python -m src.explain.visualize
     deps:
@@ -116,18 +116,18 @@ stages:
       nfiles: 31261
     - path: models/emotionvision.onnx
       hash: md5
-      md5: 2c41d49503677a6c51b110ce8a9b951b
-      size: 16041487
+      md5: 7aba63952ad12be6b5f657a02285b08b
+      size: 16041489
     - path: src/explain/cam.py
       hash: md5
-      md5: 548a0f17b12116f84d990c1cae26cc01
-      size: 1368
+      md5: cd1d84e638e71b679bfb82315daf1c76
+      size: 1921
     - path: src/explain/visualize.py
       hash: md5
-      md5: 6ddc7aa852ee3ab3aaf16f0fedc2143d
-      size: 2565
+      md5: c8341ca6e7c38c56f6feb37b88e3346e
+      size: 2961
     outs:
     - path: reports/figures/gradcam_examples.png
       hash: md5
-      md5: 7387e2c34e481325cb0865bcacc6c038
-      size: 1454133
+      md5: 450ac71c77e7e1da9f1af2350ceb5493
+      size: 1818575
