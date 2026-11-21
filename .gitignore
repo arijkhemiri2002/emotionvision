@@ -3,6 +3,7 @@
 /data/processed/*
 /models/*
 !/models/.gitkeep
+!/models/model_config.json
 *.onnx
 *.pt
 *.pth
@@ -28,3 +29,7 @@ kaggle.json
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Face detector (small, versioned with Git) - must stay after the *.onnx rule
+!/models/face_detector/
+!/models/face_detector/yunet.onnx
