@@ -1,0 +1,28 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    image: emotionvision-api:latest
+    container_name: emotionvision-api
+    ports:
+      - "8000:8000"
+    environment:
+      UNCERTAINTY_THRESHOLD: "0.40"
+      MAX_UPLOAD_MB: "8"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    image: emotionvision-frontend:latest
+    container_name: emotionvision-frontend
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped

@@ -15,6 +15,7 @@ import json
 import os
 from pathlib import Path
 
+import altair as alt
 import pandas as pd
 import requests
 import streamlit as st
@@ -61,14 +62,24 @@ def to_png_bytes(img: Image.Image) -> bytes:
     return buf.getvalue()
 
 
+def _font(size: int):
+    """Readable font on Windows (arial), Linux (DejaVu) and slim Docker images (Pillow default)."""
+    for name in ("arialbd.ttf", "arial.ttf", "DejaVuSans-Bold.ttf", "DejaVuSans.ttf"):
+        try:
+            return ImageFont.truetype(name, size)
+        except OSError:
+            continue
+    try:
+        return ImageFont.load_default(size=size)   # Pillow >= 10.1
+    except TypeError:
+        return ImageFont.load_default()
+
+
 def draw_boxes(img: Image.Image, faces: list[dict]) -> Image.Image:
     out = img.convert("RGB").copy()
     d = ImageDraw.Draw(out)
     lw = max(2, out.width // 250)
-    try:
-        font = ImageFont.truetype("DejaVuSans-Bold.ttf", max(14, out.width // 40))
-    except OSError:
-        font = ImageFont.load_default()
+    font = _font(max(16, out.width // 35))
     for i, f in enumerate(faces, 1):
         b, color = f["box"], CLASS_COLORS.get(f["label"], "#FFFFFF")
         x0, y0, x1, y1 = b["x"], b["y"], b["x"] + b["width"], b["y"] + b["height"]
@@ -82,9 +93,19 @@ def draw_boxes(img: Image.Image, faces: list[dict]) -> Image.Image:
 
 def proba_chart(probs: dict[str, float]) -> None:
     df = pd.DataFrame({"expression": list(probs), "probability": list(probs.values())})
-    df = df.sort_values("probability", ascending=True)
-    st.bar_chart(df, x="expression", y="probability", horizontal=True, height=230,
-                 color="#6366F1")
+    chart = (
+        alt.Chart(df)
+        .mark_bar(cornerRadiusEnd=4)
+        .encode(
+            x=alt.X("probability:Q", scale=alt.Scale(domain=[0, 1]), axis=alt.Axis(format="%")),
+            y=alt.Y("expression:N", sort="-x", title=None),
+            color=alt.Color("expression:N", legend=None,
+                            scale=alt.Scale(domain=list(CLASS_COLORS), range=list(CLASS_COLORS.values()))),
+            tooltip=["expression", alt.Tooltip("probability:Q", format=".1%")],
+        )
+        .properties(height=240)
+    )
+    st.altair_chart(chart, width="stretch")
 
 
 def show_results(img: Image.Image, res: dict) -> None:

@@ -1,0 +1,16 @@
+# Keep the build context small: only what the Dockerfiles COPY
+.git
+.dvc
+.venv
+venv
+data
+mlruns
+mlartifacts
+notebooks
+tests
+**/__pycache__
+**/*.pyc
+models/*.pt
+models/emotionvision_int8.onnx
+models/_tmp
+*.zip

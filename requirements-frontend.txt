@@ -1,0 +1,6 @@
+# Minimal dependencies for the Streamlit image
+streamlit>=1.50
+requests
+pandas
+pillow
+altair
