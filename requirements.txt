@@ -1,0 +1,37 @@
+# Data & ML
+numpy
+pandas
+pillow
+opencv-python-headless
+scikit-learn
+matplotlib
+seaborn
+torch
+torchvision
+timm
+
+# MLOps
+dvc
+dvc-s3
+mlflow
+dagshub
+kaggle
+
+# Optimization
+onnx
+onnxruntime
+
+# API
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+
+# Frontend
+streamlit
+requests
+
+# Tests & quality
+pytest
+httpx
+ruff

@@ -1,0 +1,22 @@
+seed: 42
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  # 7 classes (contempt / unknown / not-a-face are dropped)
+  classes: [neutral, happiness, surprise, sadness, anger, disgust, fear]
+  img_size: 48
+
+train:
+  model: efficientnet_b0      # baseline_cnn | efficientnet_b0 | resnet50
+  pretrained: true
+  input_size: 112
+  batch_size: 128
+  epochs: 30
+  lr: 0.0003
+  weight_decay: 0.0001
+  freeze_backbone_epochs: 3   # head-only warm-up, then full fine-tuning
+  label_smoothing: 0.1
+
+export:
+  onnx_opset: 17
