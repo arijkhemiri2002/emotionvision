@@ -14,3 +14,45 @@ stages:
     plots:
       - reports/figures/class_distribution.png:
           cache: false
+
+  # Training runs on Kaggle (notebooks/train_kaggle.ipynb) and is tracked by MLflow.
+  # `export` pulls the registered `champion` model from the MLflow registry.
+  export:
+    cmd: python -m src.models.export_onnx
+    deps:
+      - src/models/export_onnx.py
+      - src/models/factory.py
+      - data/processed
+    params:
+      - export
+    outs:
+      - models/emotionvision.onnx
+      - models/champion.pt
+      - models/model_config.json:
+          cache: false
+
+  benchmark:
+    cmd: python -m src.models.benchmark
+    deps:
+      - src/models/benchmark.py
+      - models/emotionvision.onnx
+      - models/champion.pt
+      - data/processed
+    outs:
+      - models/emotionvision_int8.onnx
+    metrics:
+      - reports/benchmark.json:
+          cache: false
+      - reports/quantization_ablation.json:
+          cache: false
+
+  explain:
+    cmd: python -m src.explain.visualize
+    deps:
+      - src/explain/visualize.py
+      - src/explain/cam.py
+      - models/emotionvision.onnx
+      - data/processed
+    plots:
+      - reports/figures/gradcam_examples.png:
+          cache: false

@@ -1,0 +1,33 @@
+{
+  "pytorch_fp32": {
+    "size_mb": 16.37,
+    "test_accuracy": 0.8559,
+    "test_macro_f1": 0.7819,
+    "latency_ms_mean": 28.78,
+    "latency_ms_p50": 30.08,
+    "latency_ms_p95": 33.37,
+    "throughput_img_s": 117.9,
+    "speedup_vs_pytorch": 1.0
+  },
+  "onnx_fp32": {
+    "size_mb": 16.04,
+    "test_accuracy": 0.8559,
+    "test_macro_f1": 0.7819,
+    "latency_ms_mean": 3.68,
+    "latency_ms_p50": 3.59,
+    "latency_ms_p95": 4.39,
+    "throughput_img_s": 342.5,
+    "speedup_vs_pytorch": 7.82
+  },
+  "onnx_int8": {
+    "size_mb": 4.78,
+    "test_accuracy": 0.8349,
+    "test_macro_f1": 0.7334,
+    "latency_ms_mean": 5.93,
+    "latency_ms_p50": 5.42,
+    "latency_ms_p95": 9.05,
+    "throughput_img_s": 260.4,
+    "speedup_vs_pytorch": 4.85,
+    "quant_config": "percentile_conv_x"
+  }
+}
