@@ -14,7 +14,7 @@ timm
 # MLOps
 dvc
 dvc-s3
-mlflow
+mlflow>=2.16,<3   # DagsHub server compatibility
 dagshub
 kaggle
 
