@@ -1,0 +1,36 @@
+{
+  "total_kept": 31264,
+  "dropped": 4623,
+  "train_size": 24941,
+  "val_size": 3186,
+  "test_size": 3137,
+  "per_class": {
+    "train": {
+      "neutral": 8740,
+      "happiness": 7287,
+      "surprise": 3149,
+      "sadness": 3014,
+      "anger": 2100,
+      "disgust": 119,
+      "fear": 532
+    },
+    "val": {
+      "neutral": 1182,
+      "happiness": 865,
+      "surprise": 415,
+      "sadness": 351,
+      "anger": 287,
+      "disgust": 24,
+      "fear": 62
+    },
+    "test": {
+      "neutral": 1090,
+      "happiness": 893,
+      "surprise": 396,
+      "sadness": 384,
+      "anger": 273,
+      "disgust": 18,
+      "fear": 83
+    }
+  }
+}

@@ -1,0 +1,16 @@
+stages:
+  prepare:
+    cmd: python -m src.data.prepare
+    deps:
+      - src/data/prepare.py
+      - data/raw
+    params:
+      - data
+    outs:
+      - data/processed
+    metrics:
+      - reports/data_stats.json:
+          cache: false
+    plots:
+      - reports/figures/class_distribution.png:
+          cache: false

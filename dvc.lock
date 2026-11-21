@@ -1,0 +1,42 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m src.data.prepare
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 01558f9a4a55b308a6685a8c4b2d61c4.dir
+      size: 302711416
+      nfiles: 2
+    - path: src/data/prepare.py
+      hash: md5
+      md5: c8e8d2c0b331963eb2becfae012d46e5
+      size: 3899
+    params:
+      params.yaml:
+        data:
+          raw_dir: data/raw
+          processed_dir: data/processed
+          classes:
+          - neutral
+          - happiness
+          - surprise
+          - sadness
+          - anger
+          - disgust
+          - fear
+          img_size: 48
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 858d4fe8a9fb54c59fd04b5f61e53ce0.dir
+      size: 54786854
+      nfiles: 31261
+    - path: reports/data_stats.json
+      hash: md5
+      md5: 04337ef1165901d009fcbd23d9db2262
+      size: 683
+    - path: reports/figures/class_distribution.png
+      hash: md5
+      md5: c05a2053dcc6ba8394b0600ad47ade4c
+      size: 28102

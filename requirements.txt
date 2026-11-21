@@ -1,6 +1,7 @@
 # Data & ML
 numpy
 pandas
+pyyaml
 pillow
 opencv-python-headless
 scikit-learn
