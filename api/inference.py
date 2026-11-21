@@ -95,7 +95,7 @@ class EmotionEngine:
                 "label": self.classes[k],
                 "confidence": round(float(probs[i, k]), 4),
                 "uncertain": bool(probs[i, k] < self.uncertainty_threshold),
-                "probabilities": {c: round(float(p), 4) for c, p in zip(self.classes, probs[i])},
+                "probabilities": {c: round(float(p), 4) for c, p in zip(self.classes, probs[i], strict=True)},
                 "heatmap_png_base64": None,
             }
             if explain:

@@ -1,0 +1,121 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # ------------------------------------------------------------------ CI
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install ruff
+      - run: ruff check .
+
+  test:
+    name: Tests (pytest)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
+      - name: Install dependencies (torch CPU only)
+        run: |
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-ci.txt
+      - name: Run tests
+        run: pytest --cov=src --cov=api --cov-report=term --cov-report=xml --junitxml=test-results.xml
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            coverage.xml
+            test-results.xml
+
+  # ------------------------------------------------------------------ CD
+  docker:
+    name: Build, smoke-test & push Docker images
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Pull the champion ONNX model from DagsHub (DVC)
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          pip install "dvc[s3]"
+          dvc remote modify origin --local access_key_id "$DAGSHUB_TOKEN"
+          dvc remote modify origin --local secret_access_key "$DAGSHUB_TOKEN"
+          dvc pull export
+          ls -lh models/
+
+      - name: Build images
+        run: docker compose build
+
+      - name: Smoke test (API + frontend)
+        run: |
+          docker compose up -d
+          for i in $(seq 1 30); do
+            if curl -fs http://localhost:8000/health && curl -fs http://localhost:8501/_stcore/health; then
+              echo; echo "Containers are healthy"; break
+            fi
+            sleep 3
+          done
+          curl -fs http://localhost:8000/model/info
+          curl -fs -X POST http://localhost:8000/predict -F "file=@reports/figures/class_distribution.png;type=image/png" | head -c 300
+          echo
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag & push
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          SHA=${GITHUB_SHA::7}
+          for svc in api frontend; do
+            for tag in latest "$SHA"; do
+              docker tag emotionvision-$svc:latest ghcr.io/$OWNER/emotionvision-$svc:$tag
+              docker push ghcr.io/$OWNER/emotionvision-$svc:$tag
+            done
+          done
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down

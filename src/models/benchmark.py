@@ -107,7 +107,7 @@ def quantize_int8(val_ds, val_loader, seed: int, n_calib: int = 512) -> tuple[st
             extra_options={"CalibMovingAverage": True},
         )
         sess = ort.InferenceSession(str(out), providers=["CPUExecutionProvider"])
-        m = evaluate(lambda x: sess.run(["logits"], {"input": x})[0], val_loader)
+        m = evaluate(lambda x, sess=sess: sess.run(["logits"], {"input": x})[0], val_loader)
         ablation[name] = {"val_accuracy": round(m["accuracy"], 4), "val_macro_f1": round(m["macro_f1"], 4),
                           "size_mb": round(out.stat().st_size / 1e6, 2)}
         print(f"  [int8 {name:18s}] val_acc={m['accuracy']:.4f} val_macro_f1={m['macro_f1']:.4f}")

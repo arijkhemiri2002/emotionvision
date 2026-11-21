@@ -1,0 +1,19 @@
+# Test dependencies for GitHub Actions (torch CPU is installed separately)
+timm
+numpy
+pandas
+pyyaml
+pillow
+matplotlib
+seaborn
+scikit-learn
+opencv-python-headless
+onnx
+onnxruntime
+fastapi
+python-multipart
+pydantic
+httpx
+pytest
+pytest-cov
+ruff

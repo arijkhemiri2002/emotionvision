@@ -104,7 +104,8 @@ def main() -> None:
                                    args.batch_size, args.num_workers)
     if args.max_batches:  # debug mode: also shrink eval sets
         for split in ("val", "test"):
-            sub = torch.utils.data.Subset(dsets[split], range(min(len(dsets[split]), args.max_batches * args.batch_size)))
+            n = min(len(dsets[split]), args.max_batches * args.batch_size)
+            sub = torch.utils.data.Subset(dsets[split], range(n))
             loaders[split] = torch.utils.data.DataLoader(sub, batch_size=args.batch_size)
 
     weights = class_weights(dsets["train"].targets, len(classes), args.class_weighting)
@@ -135,7 +136,7 @@ def main() -> None:
         mlflow.log_params({**vars(args), "n_params": n_params, "device": device.type,
                            "classes": ",".join(classes), "train_size": len(dsets["train"])})
         if weights is not None:
-            mlflow.log_params({f"w_{c}": round(float(w), 3) for c, w in zip(classes, weights)})
+            mlflow.log_params({f"w_{c}": round(float(w), 3) for c, w in zip(classes, weights, strict=True)})
 
         best_f1, bad_epochs = -1.0, 0
         for epoch in range(1, args.epochs + 1):
